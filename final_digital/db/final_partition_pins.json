@@ -1,0 +1,197 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "led_dispense",
+					"strict" : false
+				},
+				{
+					"name" : "led_change",
+					"strict" : false
+				},
+				{
+					"name" : "led_refund",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[0]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[1]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[2]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[3]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[4]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[5]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[6]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[7]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[8]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[9]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[10]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[11]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[12]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[13]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[14]",
+					"strict" : false
+				},
+				{
+					"name" : "seg16[15]",
+					"strict" : false
+				},
+				{
+					"name" : "clk",
+					"strict" : false
+				},
+				{
+					"name" : "reset",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[0]",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[1]",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[2]",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[3]",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[4]",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[5]",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[6]",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[7]",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[8]",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[9]",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[10]",
+					"strict" : false
+				},
+				{
+					"name" : "product_price[9]",
+					"strict" : false
+				},
+				{
+					"name" : "product_price[8]",
+					"strict" : false
+				},
+				{
+					"name" : "product_price[7]",
+					"strict" : false
+				},
+				{
+					"name" : "product_price[6]",
+					"strict" : false
+				},
+				{
+					"name" : "product_price[5]",
+					"strict" : false
+				},
+				{
+					"name" : "product_price[4]",
+					"strict" : false
+				},
+				{
+					"name" : "product_price[3]",
+					"strict" : false
+				},
+				{
+					"name" : "product_price[2]",
+					"strict" : false
+				},
+				{
+					"name" : "product_price[1]",
+					"strict" : false
+				},
+				{
+					"name" : "product_price[0]",
+					"strict" : false
+				},
+				{
+					"name" : "buttons[11]",
+					"strict" : false
+				},
+				{
+					"name" : "valid_product",
+					"strict" : false
+				},
+				{
+					"name" : "coin_25",
+					"strict" : false
+				},
+				{
+					"name" : "coin_50",
+					"strict" : false
+				},
+				{
+					"name" : "coin_100",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

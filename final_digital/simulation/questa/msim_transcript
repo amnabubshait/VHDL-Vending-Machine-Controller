@@ -1,0 +1,124 @@
+# Reading pref.tcl
+# //  Questa Intel Starter FPGA Edition-64
+# //  Version 2023.3 win64 Jul 17 2023
+# //
+# //  Copyright 1991-2023 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# do final_run_msim_rtl_vhdl.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Questa Intel Starter FPGA Edition-64 vmap 2023.3 Lib Mapping Utility 2023.07 Jul 17 2023
+# vmap work rtl_work 
+# Copying c:/intelfpga_lite/23.1std/questa_fse/win64/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vcom -93 -work work {C:/Users/A01195/Desktop/final_digital/vending_fsm.vhd}
+# Questa Intel Starter FPGA Edition-64 vcom 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 16:43:47 on May 06,2025
+# vcom -reportprogress 300 -93 -work work C:/Users/A01195/Desktop/final_digital/vending_fsm.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity vending_fsm
+# -- Compiling architecture rtl of vending_fsm
+# End time: 16:43:47 on May 06,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+vcom -reportprogress 300 -work work C:/Users/A01195/Desktop/final_digital/tb_vending_machine.vhd
+# Questa Intel Starter FPGA Edition-64 vcom 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 16:44:04 on May 06,2025
+# vcom -reportprogress 300 -work work C:/Users/A01195/Desktop/final_digital/tb_vending_machine.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity tb_vending_machine
+# -- Compiling architecture sim of tb_vending_machine
+# End time: 16:44:04 on May 06,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+vsim -voptargs=+acc work.tb_vending_machine
+# vsim -voptargs="+acc" work.tb_vending_machine 
+# Start time: 16:44:11 on May 06,2025
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Warning: (vopt-10587) Some optimizations are turned off because the +acc switch is in effect. This will cause your simulation to run slowly. Please use -access/-debug to maintain needed visibility.
+# ** Warning: C:/Users/A01195/Desktop/final_digital/tb_vending_machine.vhd(116): (vopt-3473) Component instance "U1 : input_decoder" is not bound.
+#         Region: /tb_vending_machine
+# ** Warning: C:/Users/A01195/Desktop/final_digital/tb_vending_machine.vhd(125): (vopt-3473) Component instance "U2 : timer" is not bound.
+#         Region: /tb_vending_machine
+# ** Warning: C:/Users/A01195/Desktop/final_digital/tb_vending_machine.vhd(134): (vopt-3473) Component instance "U3 : coin_input" is not bound.
+#         Region: /tb_vending_machine
+# ** Warning: C:/Users/A01195/Desktop/final_digital/tb_vending_machine.vhd(164): (vopt-3473) Component instance "U5 : output_control" is not bound.
+#         Region: /tb_vending_machine
+# ** Note: (vopt-143) Recognized 1 FSM in architecture body "vending_fsm(rtl)".
+# ** Note: (vsim-12126) Error and warning message counts have been restored: Errors=0, Warnings=5.
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.tb_vending_machine(sim)#1
+# ** Warning: (vsim-3473) Component instance "U1 : input_decoder" is not bound.
+#    Time: 0 ns  Iteration: 0  Instance: /tb_vending_machine File: C:/Users/A01195/Desktop/final_digital/tb_vending_machine.vhd
+# ** Warning: (vsim-3473) Component instance "U2 : timer" is not bound.
+#    Time: 0 ns  Iteration: 0  Instance: /tb_vending_machine File: C:/Users/A01195/Desktop/final_digital/tb_vending_machine.vhd
+# ** Warning: (vsim-3473) Component instance "U3 : coin_input" is not bound.
+#    Time: 0 ns  Iteration: 0  Instance: /tb_vending_machine File: C:/Users/A01195/Desktop/final_digital/tb_vending_machine.vhd
+# Loading work.vending_fsm(rtl)#1
+# ** Warning: (vsim-3473) Component instance "U5 : output_control" is not bound.
+#    Time: 0 ns  Iteration: 0  Instance: /tb_vending_machine File: C:/Users/A01195/Desktop/final_digital/tb_vending_machine.vhd
+add wave -position insertpoint  \
+sim:/tb_vending_machine/buttons \
+sim:/tb_vending_machine/cancel_pressed \
+sim:/tb_vending_machine/clk \
+sim:/tb_vending_machine/CLK_PERIOD \
+sim:/tb_vending_machine/coin_25 \
+sim:/tb_vending_machine/coin_50 \
+sim:/tb_vending_machine/coin_100 \
+sim:/tb_vending_machine/credit_value \
+sim:/tb_vending_machine/dispense_change \
+sim:/tb_vending_machine/dispense_item \
+sim:/tb_vending_machine/enable_coin_input \
+sim:/tb_vending_machine/enter_pressed \
+sim:/tb_vending_machine/key_pressed \
+sim:/tb_vending_machine/key_value \
+sim:/tb_vending_machine/led_change \
+sim:/tb_vending_machine/led_dispense \
+sim:/tb_vending_machine/led_refund \
+sim:/tb_vending_machine/product_price \
+sim:/tb_vending_machine/refund_credit \
+sim:/tb_vending_machine/reset \
+sim:/tb_vending_machine/seg16 \
+sim:/tb_vending_machine/show_error \
+sim:/tb_vending_machine/timer_done \
+sim:/tb_vending_machine/timer_enable \
+sim:/tb_vending_machine/timer_start \
+sim:/tb_vending_machine/valid_product
+force -freeze sim:/tb_vending_machine/clk 1 0, 0 {50 ns} -r 100
+run
+run
+# ** Note: 1) Exact­-change purchase
+#    Time: 120 ns  Iteration: 0  Instance: /tb_vending_machine
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+# End time: 17:00:25 on May 06,2025, Elapsed time: 0:16:14
+# Errors: 0, Warnings: 9

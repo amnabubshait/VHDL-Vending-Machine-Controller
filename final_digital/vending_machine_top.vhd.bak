@@ -1,0 +1,116 @@
+-- File: vending_machine_top.vhd
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity vending_machine_top is
+  port (
+    -- global
+    clk            : in  std_logic;
+    reset          : in  std_logic;
+    -- keypad buttons: 0–9, cancel, enter
+    buttons        : in  std_logic_vector(11 downto 0);
+    -- coin inputs
+    coin_25        : in  std_logic;
+    coin_50        : in  std_logic;
+    coin_100       : in  std_logic;
+    -- product select (driven externally in TB)
+    valid_product  : in  std_logic;
+    product_price  : in  unsigned(9 downto 0);
+    -- user outputs
+    led_dispense   : out std_logic;
+    led_change     : out std_logic;
+    led_refund     : out std_logic;
+    seg16          : out std_logic_vector(15 downto 0)
+  );
+end entity;
+
+architecture rtl of vending_machine_top is
+
+  -- Internal signals to chain modules
+  signal key_pressed        : std_logic;
+  signal key_value          : std_logic_vector(3 downto 0);
+  signal cancel_pressed     : std_logic;
+  signal enter_pressed      : std_logic;
+
+  signal timer_start_sig    : std_logic;
+  signal timer_done_sig     : std_logic;
+
+  signal enable_coin_input  : std_logic;
+  signal credit_value_sig   : unsigned(9 downto 0);
+
+  signal dispense_item_sig  : std_logic;
+  signal dispense_change_sig: std_logic;
+  signal refund_credit_sig  : std_logic;
+  signal show_error_sig     : std_logic;
+
+begin
+
+  -- 1) Decode raw buttons → key_pressed, key_value, cancel, enter
+  U_input_decoder: entity work.input_decoder
+    port map (
+      buttons        => buttons,
+      key_pressed    => key_pressed,
+      key_value      => key_value,
+      cancel_pressed => cancel_pressed,
+      enter_pressed  => enter_pressed
+    );
+
+  -- 2) 15s countdown timer (internal enable tied to ’1’ here)
+  U_timer: entity work.timer
+    port map (
+      clk          => clk,
+      reset        => reset,
+      timer_start  => timer_start_sig,
+      timer_enable => '1',
+      timer_done   => timer_done_sig
+    );
+
+  -- 3) Coin‐input accumulator (up to 999)
+  U_coin_input: entity work.coin_input
+    port map (
+      clk               => clk,
+      reset             => reset,
+      enable_coin_input => enable_coin_input,
+      coin_25           => coin_25,
+      coin_50           => coin_50,
+      coin_100          => coin_100,
+      credit_value      => credit_value_sig
+    );
+
+  -- 4) The FSM controller ties all logic together
+  U_fsm: entity work.vending_fsm
+    port map (
+      clk               => clk,
+      reset             => reset,
+      key_pressed       => key_pressed,
+      cancel            => cancel_pressed,
+      enter             => enter_pressed,
+      valid_product     => valid_product,
+      timer_done        => timer_done_sig,
+      credit_value      => credit_value_sig,
+      product_price     => product_price,
+      timer_start       => timer_start_sig,
+      enable_coin_input => enable_coin_input,
+      dispense_item     => dispense_item_sig,
+      dispense_change   => dispense_change_sig,
+      refund_credit     => refund_credit_sig,
+      show_error        => show_error_sig
+    );
+
+  -- 5) Drive LEDs and 16-segment error display
+  U_output_ctrl: entity work.output_control
+    port map (
+      clk             => clk,
+      reset           => reset,
+      dispense_item   => dispense_item_sig,
+      dispense_change => dispense_change_sig,
+      refund_credit   => refund_credit_sig,
+      show_error      => show_error_sig,
+      led_dispense    => led_dispense,
+      led_change      => led_change,
+      led_refund      => led_refund,
+      seg16           => seg16
+    );
+
+end architecture;

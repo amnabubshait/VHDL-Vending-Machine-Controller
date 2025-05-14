@@ -1,0 +1,272 @@
+-- File: tb_vending_machine.vhd
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity tb_vending_machine is
+end entity;
+
+architecture sim of tb_vending_machine is
+
+  -- Component declarations
+  component input_decoder
+    port (
+      buttons        : in  std_logic_vector(11 downto 0);
+      key_pressed    : out std_logic;
+      key_value      : out std_logic_vector(3 downto 0);
+      cancel_pressed : out std_logic;
+      enter_pressed  : out std_logic
+    );
+  end component;
+
+  component timer
+    port (
+      clk          : in  std_logic;
+      reset        : in  std_logic;
+      timer_start  : in  std_logic;
+      timer_enable : in  std_logic;
+      timer_done   : out std_logic
+    );
+  end component;
+
+  component coin_input
+    port (
+      clk               : in  std_logic;
+      reset             : in  std_logic;
+      enable_coin_input : in  std_logic;
+      coin_25           : in  std_logic;
+      coin_50           : in  std_logic;
+      coin_100          : in  std_logic;
+      credit_value      : out unsigned(9 downto 0)
+    );
+  end component;
+
+  component vending_fsm
+    port (
+      clk               : in  std_logic;
+      reset             : in  std_logic;
+      key_pressed       : in  std_logic;
+      cancel            : in  std_logic;
+      enter             : in  std_logic;
+      valid_product     : in  std_logic;
+      timer_done        : in  std_logic;
+      credit_value      : in  unsigned(9 downto 0);
+      product_price     : in  unsigned(9 downto 0);
+      timer_start       : out std_logic;
+      enable_coin_input : out std_logic;
+      dispense_item     : out std_logic;
+      dispense_change   : out std_logic;
+      refund_credit     : out std_logic;
+      show_error        : out std_logic
+    );
+  end component;
+
+  component output_control
+    port (
+      clk             : in  std_logic;
+      reset           : in  std_logic;
+      dispense_item   : in  std_logic;
+      dispense_change : in  std_logic;
+      refund_credit   : in  std_logic;
+      show_error      : in  std_logic;
+      led_dispense    : out std_logic;
+      led_change      : out std_logic;
+      led_refund      : out std_logic;
+      seg16           : out std_logic_vector(15 downto 0)
+    );
+  end component;
+
+  -- Signals
+  signal clk               : std_logic := '0';
+  signal reset             : std_logic := '1';
+  signal buttons           : std_logic_vector(11 downto 0) := (others=>'0');
+  signal key_pressed       : std_logic;
+  signal key_value         : std_logic_vector(3 downto 0);
+  signal cancel_pressed    : std_logic;
+  signal enter_pressed     : std_logic;
+
+  signal timer_start       : std_logic;
+  signal timer_enable      : std_logic := '1';    -- always enabled in TB
+  signal timer_done        : std_logic;
+
+  signal enable_coin_input : std_logic;
+  signal coin_25           : std_logic := '0';
+  signal coin_50           : std_logic := '0';
+  signal coin_100          : std_logic := '0';
+  signal credit_value      : unsigned(9 downto 0);
+
+  signal valid_product     : std_logic := '0';
+  signal product_price     : unsigned(9 downto 0) := (others=>'0');
+
+  signal dispense_item     : std_logic;
+  signal dispense_change   : std_logic;
+  signal refund_credit     : std_logic;
+  signal show_error        : std_logic;
+
+  signal led_dispense      : std_logic;
+  signal led_change        : std_logic;
+  signal led_refund        : std_logic;
+  signal seg16             : std_logic_vector(15 downto 0);
+
+  constant CLK_PERIOD : time := 20 ns;  -- 50 MHz
+
+begin
+
+  -- Instantiate all modules
+  U1: input_decoder
+    port map (
+      buttons        => buttons,
+      key_pressed    => key_pressed,
+      key_value      => key_value,
+      cancel_pressed => cancel_pressed,
+      enter_pressed  => enter_pressed
+    );
+
+  U2: timer
+    port map (
+      clk          => clk,
+      reset        => reset,
+      timer_start  => timer_start,
+      timer_enable => timer_enable,
+      timer_done   => timer_done
+    );
+
+  U3: coin_input
+    port map (
+      clk               => clk,
+      reset             => reset,
+      enable_coin_input => enable_coin_input,
+      coin_25           => coin_25,
+      coin_50           => coin_50,
+      coin_100          => coin_100,
+      credit_value      => credit_value
+    );
+
+  U4: vending_fsm
+    port map (
+      clk               => clk,
+      reset             => reset,
+      key_pressed       => key_pressed,
+      cancel            => cancel_pressed,
+      enter             => enter_pressed,
+      valid_product     => valid_product,
+      timer_done        => timer_done,
+      credit_value      => credit_value,
+      product_price     => product_price,
+      timer_start       => timer_start,
+      enable_coin_input => enable_coin_input,
+      dispense_item     => dispense_item,
+      dispense_change   => dispense_change,
+      refund_credit     => refund_credit,
+      show_error        => show_error
+    );
+
+  U5: output_control
+    port map (
+      clk             => clk,
+      reset           => reset,
+      dispense_item   => dispense_item,
+      dispense_change => dispense_change,
+      refund_credit   => refund_credit,
+      show_error      => show_error,
+      led_dispense    => led_dispense,
+      led_change      => led_change,
+      led_refund      => led_refund,
+      seg16           => seg16
+    );
+
+  -- Clock generator
+  clk_proc: process
+  begin
+    clk <= '0'; wait for CLK_PERIOD/2;
+    clk <= '1'; wait for CLK_PERIOD/2;
+  end process;
+
+  -- Stimulus & checks
+  stim_proc: process
+  begin
+    -- release reset
+    wait for 100 ns;
+    reset <= '0';
+    wait for CLK_PERIOD;
+
+    ----------------------------------------------------------------
+    report "1) Exact­-change purchase" severity note;
+    -- select product “01”
+    buttons <= (others=>'0');
+    buttons(0) <= '1'; wait for CLK_PERIOD; buttons(0) <= '0'; wait for CLK_PERIOD;
+    buttons(1) <= '1'; wait for CLK_PERIOD; buttons(1) <= '0';
+    valid_product <= '1'; product_price <= to_unsigned(100,10);
+    wait for CLK_PERIOD; valid_product <= '0';
+
+    wait until enable_coin_input='1';
+    coin_100 <= '1'; wait for CLK_PERIOD; coin_100 <= '0';
+    wait until dispense_item='1';
+    assert led_dispense='1' report "Exact-change failed" severity error;
+    wait for CLK_PERIOD;
+    assert led_dispense='0' report "Dispense LED stuck" severity error;
+
+    ----------------------------------------------------------------
+    report "2) Over-payment + change" severity note;
+    buttons <= (others=>'0');
+    buttons(0) <= '1'; wait for CLK_PERIOD; buttons(0) <= '0'; wait for CLK_PERIOD;
+    buttons(2) <= '1'; wait for CLK_PERIOD; buttons(2) <= '0';
+    valid_product <= '1'; product_price <= to_unsigned(200,10);
+    wait for CLK_PERIOD; valid_product <= '0';
+    wait until enable_coin_input='1';
+    -- insert 2×100
+    coin_100 <= '1'; wait for CLK_PERIOD; coin_100 <= '0'; wait for CLK_PERIOD;
+    coin_100 <= '1'; wait for CLK_PERIOD; coin_100 <= '0';
+    wait until dispense_item='1';
+    wait until dispense_change='1';
+    assert led_change='1' report "Over-pay change failed" severity error;
+    wait for CLK_PERIOD;
+    assert led_change='0' report "Change LED stuck" severity error;
+
+    ----------------------------------------------------------------
+    report "3) Invalid code" severity note;
+    buttons <= (others=>'0');
+    buttons(1) <= '1'; wait for CLK_PERIOD; buttons(1) <= '0'; wait for CLK_PERIOD;
+    buttons(3) <= '1'; wait for CLK_PERIOD; buttons(3) <= '0';
+    valid_product <= '0';
+    wait until show_error='1';
+    assert show_error='1' report "Invalid-code error failed" severity error;
+
+    ----------------------------------------------------------------
+    report "4) Cancel mid-entry" severity note;
+    buttons <= (others=>'0');
+    buttons(0) <= '1'; wait for CLK_PERIOD; buttons(0) <= '0'; wait for CLK_PERIOD;
+    buttons(10) <= '1'; wait for CLK_PERIOD; buttons(10) <= '0';
+    wait until refund_credit='1';
+    assert led_refund='1' report "Cancel refund failed" severity error;
+    wait until show_error='1';
+
+    ----------------------------------------------------------------
+    report "5) Timeout at digit entry" severity note;
+    buttons <= (others=>'0');
+    buttons(4) <= '1'; wait for CLK_PERIOD; buttons(4) <= '0';
+    -- no second digit
+    wait until timer_done='1';
+    wait until refund_credit='1';
+    wait until show_error='1';
+    assert led_refund='1' report "Digit-timeout refund failed" severity error;
+
+    ----------------------------------------------------------------
+    report "6) Timeout at coin input" severity note;
+    buttons <= (others=>'0');
+    buttons(0) <= '1'; wait for CLK_PERIOD; buttons(0) <= '0'; wait for CLK_PERIOD;
+    buttons(1) <= '1'; wait for CLK_PERIOD; buttons(1) <= '0';
+    valid_product <= '1'; product_price <= to_unsigned(50,10);
+    wait for CLK_PERIOD; valid_product <= '0';
+    wait until enable_coin_input='1';
+    -- no coins
+    wait until timer_done='1';
+    wait until refund_credit='1';
+    wait until show_error='1';
+    assert led_refund='1' report "Coin-timeout refund failed" severity error;
+
+    report "All integrated tests passed." severity note;
+    wait;
+  end process;
+
+end architecture;

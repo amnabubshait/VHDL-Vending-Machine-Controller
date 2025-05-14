@@ -1,0 +1,11 @@
+
+State Machine - |vending_machine_top|vending_fsm:U4_vending_fsm|current_state
+Name current_state.S7_Error current_state.S6_Refund current_state.S5_DispenseChange current_state.S4_Dispense current_state.S3_CoinInput current_state.S2_Validate current_state.S1_ItemCode2 current_state.S0_ItemCode1 
+current_state.S0_ItemCode1 0 0 0 0 0 0 0 0 
+current_state.S1_ItemCode2 0 0 0 0 0 0 1 1 
+current_state.S2_Validate 0 0 0 0 0 1 0 1 
+current_state.S3_CoinInput 0 0 0 0 1 0 0 1 
+current_state.S4_Dispense 0 0 0 1 0 0 0 1 
+current_state.S5_DispenseChange 0 0 1 0 0 0 0 1 
+current_state.S6_Refund 0 1 0 0 0 0 0 1 
+current_state.S7_Error 1 0 0 0 0 0 0 1 
